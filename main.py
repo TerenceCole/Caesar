@@ -15,10 +15,38 @@
 # limitations under the License.
 #
 import webapp2
+from caesar import encrypt
+
+#answer = encrypt("Hello, Zach!", 2)
+#print(answer)
+# => prints Jgnnq, Bcej!
+
+form="""
+<form method="post">
+    <div>
+        <label for="rot">Rotate Your Text by:</label>
+        <input type="text" name="rot" value="0">
+        <p class="error"></p>
+    </div>
+    <textarea type="text" name="answer">%(answer)s</textarea>
+    <br>
+    <input type="submit">
+</form>
+"""
 
 class MainHandler(webapp2.RequestHandler):
+
+    def write_form(self, answer=""):
+        self.response.write(form % {"answer": answer})
+
     def get(self):
-        self.response.write('Hello world!')
+        self.write_form()
+
+    def post(self):
+        userAnswer = self.request.get("answer")
+        userRot = int(self.request.get("rot"))
+        encryptedAnswer = encrypt(userAnswer, userRot)
+        self.write_form(encryptedAnswer)
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler)
